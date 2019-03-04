@@ -5,13 +5,15 @@
 #include "disastrOS_syscalls.h"
 #include "disastrOS_semaphore.h"
 #include "disastrOS_semdescriptor.h"
+#include "disastrOS_globals.h"
+
 
 void internal_semOpen(){
 	//Get semaphore id and value from "registers"
 	int sem_num = running->syscall_args[0];
 	int sem_val = running->syscall_args[1];
 
-	//Check if a semaphore with the same id exists already
+	//Check if a semaphore with the same id already exists
 	Semaphore* sem = SemaphoreList_byId(&semaphores_list, sem_num); //Need to add sempahore list to globals
 
 	if(!sem){
@@ -28,7 +30,7 @@ void internal_semOpen(){
 		List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem);
 	}
 
-	//Create the descriptor for the semaphore
+	//Create the descriptor for the semaphore to add to the running pcb
 	SemDescriptor* sem_desc = SemDescriptor_alloc(running->last_sem_fd, sem, running);
 	if(!sem_desc){
 		running->syscall_retvalue = DSOS_ESEMDESCCREATE; //New error code
@@ -37,19 +39,20 @@ void internal_semOpen(){
 	printf("[Semaphore descriptor created]\n");
 	//Increase the sem fd value for the next call
 	(running->last_sem_fd)++;
+
 	//Create a pointer to the descriptor above
 	SemDescriptorPtr*  sem_descptr = SemDescriptorPtr_alloc(sem_desc);
 	printf("[Pointer to the semaphore descriptor created\n]");
-
-	//Add the pointer to the descriptor in sem->desscriptors
 	sem_desc->ptr = sem_descptr;
+	//Add the decriptor pointer to the descriptors list in the semaphore (sem->descriptors)
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_descptr);
 	
-	//Add the descriptor to the list of semaphore descriptors of the process 
+	//Add the descriptor to the list of semaphore descriptors of the process
 	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
 
-	//Return the semaphore id 
-	running->syscall_retvalue = sem_num;
+	//Return the fd of the semaphore 
+	running->syscall_retvalue = sem_desc->fd;
+	return;
 }
 
 
