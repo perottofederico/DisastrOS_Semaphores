@@ -6,6 +6,7 @@
 #include "disastrOS_semaphore.h"
 #include "disastrOS_semdescriptor.h"
 #include "disastrOS_globals.h"
+#include "disastrOS_constants.h"
 
 
 void internal_semOpen(){
@@ -18,7 +19,7 @@ void internal_semOpen(){
 
 	if(!sem){
 		//If it is not found, create it
-		printf("[Seamphore not in list. Creating...]\n")
+		printf("[Seamphore not in list. Creating...]\n");
 		sem = Semaphore_alloc(sem_num, sem_val);
 		if(!sem){
 			printf("[Error in creating Semaphore]\n");
