@@ -45,6 +45,7 @@ void internal_semOpen(){
 	SemDescriptorPtr*  sem_descptr = SemDescriptorPtr_alloc(sem_desc);
 	printf("[Pointer to the semaphore descriptor created\n]");
 	sem_desc->ptr = sem_descptr;
+
 	//Add the decriptor pointer to the descriptors list in the semaphore (sem->descriptors)
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_descptr);
 	
@@ -55,7 +56,3 @@ void internal_semOpen(){
 	running->syscall_retvalue = sem_desc->fd;
 	return;
 }
-
-
-
-
