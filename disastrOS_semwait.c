@@ -30,7 +30,7 @@ void internal_semWait(){
 		List_insert(&sem->waiting_descritpors, sem->waiting_descritpors.last, (ListItem*)sem_desc->ptr);
 
 		//Change the process status and insert it in the list of waiting processes
-		running->status = waiting;
+		running->status = Waiting;
 		List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
 
 		//Get a new process from the ready list and put it in running
