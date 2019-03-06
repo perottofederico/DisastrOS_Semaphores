@@ -28,9 +28,9 @@ void internal_semPost(){
 		List_insert(&ready_list, ready_list.last, (ListItem*) running);
 		
 		//Move the descriptor (its pointer) from the list of waiting descriptors to in use
-		sem_descptr = (SemDescriptorPtr*) List_detach(&sem->waiting_descriptors, 
+		SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*) List_detach(&sem->waiting_descriptors, 
 			(ListItem*) sem->waiting_descriptors.first);
-		List_insert(&sem->descritpors, sem->descriptors.last, (ListItem*)sem_descptr);
+		List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*)sem_descptr);
 
 		//Remove a process from the waiting list
 		List_detach(&waiting_list, (ListItem*) sem_descptr->descriptor->pcb);

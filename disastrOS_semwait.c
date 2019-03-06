@@ -26,8 +26,8 @@ void internal_semWait(){
 	//If the value is less than 0
 	if(sem->count < 0){
 		//Move the descriptor (its pointer) from the list of descriptors ready to waiting
-		List_detach(&sem->sem_descriptors, (ListItem*)sem_desc->ptr);
-		List_insert(&sem->waiting_descritpors, sem->waiting_descritpors.last, (ListItem*)sem_desc->ptr);
+		List_detach(&sem->descriptors, (ListItem*)sem_desc->ptr);
+		List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*)sem_desc->ptr);
 
 		//Change the process status and insert it in the list of waiting processes
 		running->status = Waiting;
