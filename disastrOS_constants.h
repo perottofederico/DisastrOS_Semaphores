@@ -32,6 +32,7 @@
 #define DSOS_ESEMDESCCREATE -15
 #define DSOS_ESEMDESC_NOT_IN_PROCESS -16
 #define DSOS_ESEMINUSE -17
+#define DSOS_ESEM_MAXNUM -18
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
