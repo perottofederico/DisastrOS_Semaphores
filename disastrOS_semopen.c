@@ -20,7 +20,7 @@ void internal_semOpen(){
 	//Get semaphore id and value from "registers"
 	int sem_num = running->syscall_args[0];
 	int sem_val = running->syscall_args[1];
-
+	printf("++++++++++++++++++++++%d, %d\n++++++++++++++++++++++++++++++", sem_num, sem_val);
 	//Check if a semaphore with the same id already exists
 	Semaphore* sem = SemaphoreList_byId(&semaphores_list, sem_num); //Need to add sempahore list to globals
 
@@ -59,7 +59,7 @@ void internal_semOpen(){
 	//Add the descriptor to the list of semaphore descriptors of the process
 	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
 
-	printf("[Process #%d opened semaphore %d]\n", running->pid, sem->id);
+	printf("[Process #%d opened semaphore #%d with value %d]\n", running->pid, sem->id, sem->count);
 	//Return the fd of the semaphore 
 	running->syscall_retvalue = sem_desc->fd;
 	return;

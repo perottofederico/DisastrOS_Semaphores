@@ -23,6 +23,8 @@ void internal_semWait(){
 	//Decrease sem value
 	sem->count--;
 
+	printf("\n>>>>>>>Semaphore #%d has been decreased to %d\n\n", sem->id, sem->count);
+
 	//If the value is less than 0
 	if(sem->count < 0){
 		//Move the descriptor (its pointer) from the list of descriptors ready to waiting

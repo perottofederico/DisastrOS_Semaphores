@@ -4,6 +4,8 @@
 
 #include "disastrOS.h"
 
+#define VALUE 10
+
 // we need this to handle the sleep state
 void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
@@ -22,22 +24,14 @@ void childFunction(void* args){
   printf("Resource opened : fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
-  int sem = disastrOS_semOpen(1, 0);
-
-
-  disastrOS_semPost(sem);
-  disastrOS_printStatus();
-  disastrOS_semWait(sem);
-  disastrOS_printStatus();
-
-  int sem1 = disastrOS_semOpen(1, 10);
+  int sem = disastrOS_semOpen(20, VALUE);
   /*for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid())*5);
   }*/
 
   disastrOS_semClose(sem);
-    printf(">>>>>>>>>>>\n\n\n\n");
+  printf(">>>>>>>>>>>\n\n\n\n");
   disastrOS_exit(disastrOS_getpid()+1);
 }
 
@@ -50,7 +44,7 @@ void initFunction(void* args) {
 
   printf("I feel like to spawn 10 nice threads\n"); //Let's try with less, it's confusing as is
   int alive_children=0;
-  for (int i=0; i<2; ++i) {
+  for (int i=0; i<3; ++i) {
     int type=0;
     int mode=DSOS_CREATE;
     printf("mode: %d\n", mode);

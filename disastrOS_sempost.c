@@ -20,7 +20,10 @@ void internal_semPost(){
 
 	//Get the semaphore
 	Semaphore* sem = sem_desc->semaphore;
-	//Increase sem value
+	//Increase sem 
+
+	printf("\n>>>>>>>Semaphore #%d has been incremented to %d\n\n", sem->id, sem->count);
+
 	sem->count++;
 
 	if(sem->count < 0){
