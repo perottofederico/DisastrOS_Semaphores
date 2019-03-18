@@ -22,8 +22,7 @@ void internal_semWait(){
 	Semaphore* sem = sem_desc->semaphore;
 	//Decrease sem value
 	sem->count--;
-
-	printf("\n>>>>>>>Semaphore #%d has been decreased to %d\n\n", sem->id, sem->count);
+	printf("\n>>>>>>>Semaphore #%d has been decreased to %d by process %d\n\n", sem->id, sem->count, running->pid);
 
 	//If the value is less than 0
 	if(sem->count < 0){
@@ -36,8 +35,11 @@ void internal_semWait(){
 		List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
 
 		//Get a new process from the ready list and put it in running
-		PCB* pcb = (PCB*)List_detach(&ready_list, (ListItem*)ready_list.first);
-		running = pcb;
+		//PCB* pcb = (PCB*)List_detach(&ready_list, (ListItem*)ready_list.first);
+		//running = pcb;
+
+		disastrOS_printStatus();
+
 	}
 
 	//If successfull return 0

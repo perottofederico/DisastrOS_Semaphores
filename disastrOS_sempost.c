@@ -21,27 +21,23 @@ void internal_semPost(){
 	//Get the semaphore
 	Semaphore* sem = sem_desc->semaphore;
 	//Increase sem 
-
-	printf("\n>>>>>>>Semaphore #%d has been incremented to %d\n\n", sem->id, sem->count);
-
 	sem->count++;
+	printf("\n>>>>>>>Semaphore #%d has been incremented to %d by process %d\n\n", sem->id, sem->count, running->pid);
 
-	if(sem->count < 0){
-		//Insert running process in list of ready processes
-		List_insert(&ready_list, ready_list.last, (ListItem*) running);
+	if(sem->count <= 0){ //MOVE A PROCESS FROM WAITING TO READY
 		
-		//Move the descriptor (its pointer) from the list of waiting descriptors to in use
-		SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*) List_detach(&sem->waiting_descriptors, 
-			(ListItem*) sem->waiting_descriptors.first);
+		SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*)List_detach(&sem->waiting_descriptors,
+			sem->waiting_descriptors.first);
 		List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*)sem_descptr);
 
-		//Remove a process from the waiting list
-		List_detach(&waiting_list, (ListItem*) sem_descptr->descriptor->pcb);
+		PCB* pcb_to_wake = sem_descptr->descriptor->pcb;
+		pcb_to_wake->status = Ready;
 
-		//Change running process' state
-		running->status = Ready;
-		//Set new process as running
-		running = sem_descptr->descriptor->pcb;
+		List_detach((ListHead*)&waiting_list, (ListItem*)pcb_to_wake);
+		List_insert((ListHead*)&ready_list, (ListItem*)ready_list.last, (ListItem*)pcb_to_wake);
+		printf("Process #%d has been move to ready queue\n", pcb_to_wake->pid);
+
+		disastrOS_printStatus();
 	}
 
 	//return 0 if succesfull

@@ -25,7 +25,6 @@ void internal_semClose(){
 
 	//Get the semaphore associated to the descriptor
 	Semaphore* sem = sem_desc->semaphore;
-	printf("Semaphore %d will be deleted\n", sem->id);
 
 	//Remove the descriptor pointer from the list
 	SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*) List_detach(&sem->descriptors, (ListItem*) sem_desc->ptr);
@@ -38,17 +37,15 @@ void internal_semClose(){
 	//printf("[Descriptor and its pointer freed]\n");
 
 	//Make sure the semaphore isn't in use somewhere
-	if(sem->descriptors.size){
-		running->syscall_retvalue = DSOS_ESEMINUSE; //New error code
-		return;
+	if(sem->descriptors.size == 0){
+		printf("Semaphore %d will be deleted\n", sem->id);
+		//Free the semaphore
+		sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
+		assert(sem);
+		//printf("[Semaphore removed]\n");
+		Semaphore_free(sem);
+		//printf("[Semaphore freed]\n");
 	}
-
-	//Free the semaphore
-	sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
-	assert(sem);
-	//printf("[Semaphore removed]\n");
-	Semaphore_free(sem);
-	//printf("[Semaphore freed]\n");
 
 	//Return 0 if succesfull
 	running->syscall_retvalue = 0;

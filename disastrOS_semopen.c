@@ -20,7 +20,7 @@ void internal_semOpen(){
 	//Get semaphore id and value from "registers"
 	int sem_num = running->syscall_args[0];
 	int sem_val = running->syscall_args[1];
-	printf("++++++++++++++++++++++%d, %d\n++++++++++++++++++++++++++++++", sem_num, sem_val);
+
 	//Check if a semaphore with the same id already exists
 	Semaphore* sem = SemaphoreList_byId(&semaphores_list, sem_num); //Need to add sempahore list to globals
 
