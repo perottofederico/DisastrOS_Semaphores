@@ -22,16 +22,22 @@ void childFunction(void* args){
   printf("Resource opened : fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
-  int sem = disastrOS_semOpen(1, 1);
+  int sem1 = disastrOS_semOpen(1, 3); 
 
-  disastrOS_semWait(sem);
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid()));
-  }
-  disastrOS_semPost(sem);
 
-  disastrOS_semClose(sem);
+    disastrOS_semWait(sem1);
+    
+    printf("Process #%d in critical section\n", disastrOS_getpid());
+    disastrOS_sleep((int)disastrOS_getpid()/2);
+
+    disastrOS_semPost(sem1);
+    printf("Process #%d out of critical section\n", disastrOS_getpid());
+  }
+
+  disastrOS_semClose(sem1);
   disastrOS_exit(disastrOS_getpid()+1);
 }
 

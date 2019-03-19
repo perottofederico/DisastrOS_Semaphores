@@ -30,10 +30,13 @@ void internal_semClose(){
 	SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*) List_detach(&sem->descriptors, (ListItem*) sem_desc->ptr);
 	assert(sem_descptr);
 	//printf("[Descriptors pointers removed]\n");
+	SemDescriptorPtr* sem_descptr_waiting = sem_desc->ptr_waiting;
+
 
 	//Free the descriptor and its pointer
-	SemDescriptor_free(sem_desc);
 	SemDescriptorPtr_free(sem_descptr);
+	SemDescriptorPtr_free(sem_descptr_waiting);
+	SemDescriptor_free(sem_desc);
 	//printf("[Descriptor and its pointer freed]\n");
 
 	//Make sure the semaphore isn't in use somewhere

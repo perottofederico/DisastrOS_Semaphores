@@ -50,17 +50,20 @@ void internal_semOpen(){
 
 	//Create a pointer to the descriptor above
 	SemDescriptorPtr*  sem_descptr = SemDescriptorPtr_alloc(sem_desc);
-	//printf("[Pointer to the semaphore descriptor created]\n");
-	sem_desc->ptr = sem_descptr;
 
+	SemDescriptorPtr* sem_descptr_waiting = SemDescriptorPtr_alloc(sem_desc);
+	//printf("[Pointer to the semaphore descriptor created]\n");
+	//Add the descriptor to the list of semaphore descriptors of the process
+	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
+
+
+	sem_desc->ptr = sem_descptr;
+	sem_desc->ptr_waiting = sem_descptr_waiting;
 	//Add the decriptor pointer to the descriptors list in the semaphore (sem->descriptors)
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_descptr);
 	
-	//Add the descriptor to the list of semaphore descriptors of the process
-	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
 
 	printf("[Process #%d opened semaphore #%d with value %d]\n", running->pid, sem->id, sem->count);
 	//Return the fd of the semaphore 
 	running->syscall_retvalue = sem_desc->fd;
-	return;
 }
