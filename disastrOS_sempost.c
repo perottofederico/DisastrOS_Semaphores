@@ -24,21 +24,24 @@ void internal_semPost(){
 	sem->count++;
 	printf("\n>>>>>>>Semaphore #%d has been incremented to %d by process %d\n\n", sem->id, sem->count, running->pid);
 
-	if(sem->count <= 0){ //MOVE A PROCESS FROM WAITING TO READY
+	if(sem->count <= 0){ 
 		
+		//Move the descriptor(its pointer) from list of waiting to list of ready descriptors
 		SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*)List_detach(&sem->waiting_descriptors,
 			sem->waiting_descriptors.first);
 		List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*)sem_descptr);
 
-		PCB* pcb_to_wake = sem_descptr->descriptor->pcb;
-		pcb_to_wake->status = Ready;
+		//Get the pcb of the process to move to the ready queue and change its status
+		PCB* pcb_to_move = sem_descptr->descriptor->pcb;
+		pcb_to_move->status = Ready;
 
-		List_detach((ListHead*)&waiting_list, (ListItem*)pcb_to_wake);
-		List_insert((ListHead*)&ready_list, (ListItem*)ready_list.last, (ListItem*)pcb_to_wake);
-		printf("Process #%d has been move to ready queue\n", pcb_to_wake->pid);
-
-		disastrOS_printStatus();
+		//Move the process from waiting list to ready listd
+		List_detach((ListHead*)&waiting_list, (ListItem*)pcb_to_move);
+		List_insert((ListHead*)&ready_list, (ListItem*)ready_list.last, (ListItem*)pcb_to_move);
+		printf("\nProcess #%d has been moved to ready queue\n", pcb_to_move->pid);
 	}
+
+	disastrOS_printStatus();
 
 	//return 0 if succesfull
 	running->syscall_retvalue = 0;

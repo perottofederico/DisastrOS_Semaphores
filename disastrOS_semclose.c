@@ -18,26 +18,21 @@ void internal_semClose(){
 		return;
 	}
 
-	//Remove sem_desc from the process list of sem descriptors
-	sem_desc = (SemDescriptor*) List_detach(&running->sem_descriptors, (ListItem*)sem_desc);
-	assert(sem_desc);
-	//printf("[Descriptors removed]\n");
-
 	//Get the semaphore associated to the descriptor
 	Semaphore* sem = sem_desc->semaphore;
 
-	//Remove the descriptor pointer from the list
+	//Remove sem_desc from the process' list of sem descriptors
+	sem_desc = (SemDescriptor*) List_detach(&running->sem_descriptors, (ListItem*)sem_desc);
+	assert(sem_desc);
+
+	//Remove the descriptors of the semaphores from the lists
 	SemDescriptorPtr* sem_descptr = (SemDescriptorPtr*) List_detach(&sem->descriptors, (ListItem*) sem_desc->ptr);
 	assert(sem_descptr);
-	//printf("[Descriptors pointers removed]\n");
-	SemDescriptorPtr* sem_descptr_waiting = sem_desc->ptr_waiting;
-
 
 	//Free the descriptor and its pointer
 	SemDescriptorPtr_free(sem_descptr);
-	SemDescriptorPtr_free(sem_descptr_waiting);
 	SemDescriptor_free(sem_desc);
-	//printf("[Descriptor and its pointer freed]\n");
+	assert(sem_descptr || sem_desc);
 
 	//Make sure the semaphore isn't in use somewhere
 	if(sem->descriptors.size == 0){
@@ -45,9 +40,7 @@ void internal_semClose(){
 		//Free the semaphore
 		sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
 		assert(sem);
-		//printf("[Semaphore removed]\n");
 		Semaphore_free(sem);
-		//printf("[Semaphore freed]\n");
 	}
 
 	//Return 0 if succesfull

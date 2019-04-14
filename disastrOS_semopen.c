@@ -26,14 +26,12 @@ void internal_semOpen(){
 
 	if(!sem){
 		//If it is not found, create it
-		//printf("[Seamphore not in list. Creating...]\n");
 		sem = Semaphore_alloc(sem_num, sem_val);
 		if(!sem){
 			printf("[Error in creating Semaphore]\n");
 			running->syscall_retvalue = DSOS_ESEMOPEN; //New error code
 			return;
 		}
-		//printf("[Semaphore %d created]\n", sem_num);
 		//Insert new semaphore in semaphore list
 		List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem);
 	}
@@ -44,21 +42,23 @@ void internal_semOpen(){
 		running->syscall_retvalue = DSOS_ESEMDESCCREATE; //New error code
 		return;
 	}
-	//printf("[Semaphore descriptor %d created]\n", running->last_sem_fd);
 	//Increase the sem fd value for the next call
 	(running->last_sem_fd)++;
 
 	//Create a pointer to the descriptor above
 	SemDescriptorPtr*  sem_descptr = SemDescriptorPtr_alloc(sem_desc);
+	if(!sem_descptr){
+		running->syscall_retvalue = DSOS_ESEMDESCCREATE; //Using same error code, forgive me
+		return;
+	}
 
-	SemDescriptorPtr* sem_descptr_waiting = SemDescriptorPtr_alloc(sem_desc);
-	//printf("[Pointer to the semaphore descriptor created]\n");
 	//Add the descriptor to the list of semaphore descriptors of the process
 	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
 
-
+	//Assign the pointers to the descriptor
 	sem_desc->ptr = sem_descptr;
-	sem_desc->ptr_waiting = sem_descptr_waiting;
+	//sem_desc->ptr_waiting = sem_descptr_waiting;
+	
 	//Add the decriptor pointer to the descriptors list in the semaphore (sem->descriptors)
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_descptr);
 	
