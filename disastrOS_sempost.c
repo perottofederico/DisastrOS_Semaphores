@@ -22,7 +22,7 @@ void internal_semPost(){
 	Semaphore* sem = sem_desc->semaphore;
 	//Increase sem 
 	sem->count++;
-	printf("\n>>>>>>>Semaphore #%d has been incremented to %d by process %d\n\n", sem->id, sem->count, running->pid);
+	printf("\nSemaphore #%d has been incremented to %d by process %d\n\n", sem->id, sem->count, running->pid);
 
 	if(sem->count <= 0){ 
 		
@@ -41,7 +41,7 @@ void internal_semPost(){
 		printf("\nProcess #%d has been moved to ready queue\n", pcb_to_move->pid);
 	}
 
-	disastrOS_printStatus();
+	//disastrOS_printStatus();
 
 	//return 0 if succesfull
 	running->syscall_retvalue = 0;

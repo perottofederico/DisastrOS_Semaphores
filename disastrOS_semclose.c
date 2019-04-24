@@ -35,7 +35,7 @@ void internal_semClose(){
 	assert(sem_descptr || sem_desc);
 
 	//Make sure the semaphore isn't in use somewhere
-	if(sem->descriptors.size == 0){
+	if(sem->descriptors.size == 0 && sem->waiting_descriptors.size == 0){
 		printf("Semaphore %d will be deleted\n", sem->id);
 		//Free the semaphore
 		sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);

@@ -55,10 +55,9 @@ void internal_semOpen(){
 	//Add the descriptor to the list of semaphore descriptors of the process
 	List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*)sem_desc); 
 
-	//Assign the pointers to the descriptor
+	//Assign the pointer to the descriptor
 	sem_desc->ptr = sem_descptr;
-	//sem_desc->ptr_waiting = sem_descptr_waiting;
-	
+		
 	//Add the decriptor pointer to the descriptors list in the semaphore (sem->descriptors)
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) sem_descptr);
 	

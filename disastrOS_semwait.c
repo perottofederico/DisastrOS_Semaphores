@@ -22,11 +22,11 @@ void internal_semWait(){
 	Semaphore* sem = sem_desc->semaphore;
 
 	//Store calling process to give it a return value
-	PCB* caller = running;
+	//PCB* caller = running;
 
 	//Decrease sem value
 	sem->count--;
-	printf("\n>>>>>>>Semaphore #%d has been decreased to %d by process %d\n\n", sem->id, sem->count, running->pid);
+	printf("\nSemaphore #%d has been decreased to %d by process %d\n\n", sem->id, sem->count, running->pid);
 
 
 	if(sem->count < 0){ //move tha calling process from ready to waiting queue
@@ -43,11 +43,13 @@ void internal_semWait(){
 		//Get a new process from the ready list and put it in running
 		PCB* pcb = (PCB*)List_detach(&ready_list, (ListItem*)ready_list.first);
 		running = pcb;
+		printf("\nProcess #%d has been moved from the ready queue to running \n\n", pcb->pid);
 	}
 
-	disastrOS_printStatus();
+	//disastrOS_printStatus();
 
 	//If successfull return 0
-	caller->syscall_retvalue = 0;
+	//caller->syscall_retvalue = 0;
+	running->syscall_retvalue=0;
 	return;
 }

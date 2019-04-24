@@ -1,17 +1,17 @@
-#include <sys/types.h>
-#include <sys/time.h>
-#include <assert.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
-#include "disastrOS.h"
-#include "disastrOS_syscalls.h"
-#include "disastrOS_timer.h"
-#include "disastrOS_resource.h"
-#include "disastrOS_descriptor.h"
-#include "disastrOS_semaphore.h"
+#include <sys/types.h> 
+#include <sys/time.h> 
+#include <assert.h> 
+#include <stdarg.h> 
+#include <stdlib.h> 
+#include <stdio.h> 
+#include <signal.h> 
+#include <unistd.h> 
+#include "disastrOS.h" 
+#include "disastrOS_syscalls.h" 
+#include "disastrOS_timer.h" 
+#include "disastrOS_resource.h" 
+#include "disastrOS_descriptor.h" 
+#include "disastrOS_semaphore.h" 
 #include "disastrOS_semdescriptor.h"
 
 FILE* log_file=NULL;
@@ -308,20 +308,20 @@ int disastrOS_destroyResource(int resource_id) {
   return disastrOS_syscall(DSOS_CALL_DESTROY_RESOURCE, resource_id);
 }
 
-void disastrOS_semOpen(int id, int value){
-  disastrOS_syscall(DSOS_CALL_SEMOPEN, id, value);
+int disastrOS_semOpen(int id, int value){
+  return disastrOS_syscall(DSOS_CALL_SEMOPEN, id, value);
 }
 
-void disastrOS_semClose(int fd){
-  disastrOS_syscall(DSOS_CALL_SEMCLOSE, fd);
+int disastrOS_semClose(int fd){
+  return disastrOS_syscall(DSOS_CALL_SEMCLOSE, fd);
 }
 
-void disastrOS_semWait(int fd){
-  disastrOS_syscall(DSOS_CALL_SEMWAIT, fd);
+int disastrOS_semWait(int fd){
+  return disastrOS_syscall(DSOS_CALL_SEMWAIT, fd);
 }
 
-void disastrOS_semPost(int fd){
-  disastrOS_syscall(DSOS_CALL_SEMPOST, fd);
+int disastrOS_semPost(int fd){
+  return disastrOS_syscall(DSOS_CALL_SEMPOST, fd);
 }
 
 
