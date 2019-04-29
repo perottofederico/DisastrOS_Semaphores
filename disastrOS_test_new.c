@@ -14,6 +14,7 @@ int buffer[BUFFER_SIZE]={0};
 int in_idx=0;
 int out_idx=0;
 
+//Small function to keep track of the buffer status
 void printBuffer(int* b, int pid){
   printf("\n[Process #%d] Buffer Status: [", pid);
   for(int i=0; i<BUFFER_SIZE; i++)
@@ -24,16 +25,15 @@ void printBuffer(int* b, int pid){
 void producer(int* buffer, int fd_mutex, int fd_items, int fd_free){
   
   for(int i=0; i<CYCLES; i++){
-    disastrOS_semWait(fd_free);
+    disastrOS_semWait(fd_free); //Decrease the amount of free spaces
     disastrOS_semWait(fd_mutex);
 
     buffer[in_idx] = i+1;
     in_idx = (in_idx+1)%BUFFER_SIZE;
     disastrOS_sleep(disastrOS_getpid()); //Need this to let other processes do their thing before the semPost
 
-
     disastrOS_semPost(fd_mutex);
-    disastrOS_semPost(fd_items);
+    disastrOS_semPost(fd_items); //Increase the amount of "items" in the buffer
 
     printBuffer(buffer, disastrOS_getpid());
 
@@ -43,7 +43,7 @@ void producer(int* buffer, int fd_mutex, int fd_items, int fd_free){
 void consumer(int* buffer, int fd_mutex, int fd_items, int fd_free){
 
   for(int i=0; i<CYCLES; i++){
-    disastrOS_semWait(fd_items);
+    disastrOS_semWait(fd_items); //Decrease the amount of items in the buffer
     disastrOS_semWait(fd_mutex);
 
     buffer[out_idx] = 0;  //Let's pretend this "consumes" the item
@@ -51,7 +51,7 @@ void consumer(int* buffer, int fd_mutex, int fd_items, int fd_free){
     disastrOS_sleep(disastrOS_getpid());
 
     disastrOS_semPost(fd_mutex);
-    disastrOS_semPost(fd_free);
+    disastrOS_semPost(fd_free); //Increase the amount of free spaces in the buffer
 
     printBuffer(buffer, disastrOS_getpid());
 
@@ -78,7 +78,6 @@ void childFunction(void* args){
 
   
   disastrOS_sleep(20-disastrOS_getpid());
-  //printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
 
   if (disastrOS_getpid()%2==0){
     printf("Process #%d has been assigned producer function\n", running->pid);

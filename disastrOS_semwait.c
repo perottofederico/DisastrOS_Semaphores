@@ -38,16 +38,14 @@ void internal_semWait(){
 		//Change the process status and insert it in the list of waiting processes
 		running->status = Waiting;
 		List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
-		printf("\nProcess #%d has been moved to the waiting queue\n", running->pid);
+		printf("Process #%d has been moved to the waiting queue\n\n", running->pid);
 
 		//Get a new process from the ready list and put it in running
 		PCB* pcb = (PCB*)List_detach(&ready_list, (ListItem*)ready_list.first);
 		running = pcb;
-		printf("\nProcess #%d has been moved from the ready queue to running \n\n", pcb->pid);
+		printf("Process #%d has been moved from the ready queue to running \n\n", pcb->pid);
 	}
-
-	//disastrOS_printStatus();
-
+	
 	//If successfull return 0
 	//caller->syscall_retvalue = 0;
 	running->syscall_retvalue=0;

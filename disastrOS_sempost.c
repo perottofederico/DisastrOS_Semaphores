@@ -38,10 +38,8 @@ void internal_semPost(){
 		//Move the process from waiting list to ready listd
 		List_detach((ListHead*)&waiting_list, (ListItem*)pcb_to_move);
 		List_insert((ListHead*)&ready_list, (ListItem*)ready_list.last, (ListItem*)pcb_to_move);
-		printf("\nProcess #%d has been moved to ready queue\n", pcb_to_move->pid);
+		printf("Process #%d has been moved to ready queue\n\n", pcb_to_move->pid);
 	}
-
-	//disastrOS_printStatus();
 
 	//return 0 if succesfull
 	running->syscall_retvalue = 0;

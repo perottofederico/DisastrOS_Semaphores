@@ -16,10 +16,6 @@ void sleeperFunction(void* args){
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
-  int type=0;
-  int mode=0;
-  int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
-  printf("Resource opened : fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
   int sem1 = disastrOS_semOpen(1, 1); //num=1 and val=1 but can be whatever 
@@ -30,11 +26,12 @@ void childFunction(void* args){
 
     disastrOS_semWait(sem1);
 
-    printf("Process #%d simulating a critical section\n", disastrOS_getpid());
+    printf("\nProcess #%d simulating a critical section\n\n", disastrOS_getpid());
+    disastrOS_printStatus();
     disastrOS_sleep(disastrOS_getpid()+5); //Something like this is needed to let other processes execute before the sempost
 
     disastrOS_semPost(sem1);
-    printf("\nProcess #%d out of fake critical section\n", disastrOS_getpid());
+    printf("\nProcess #%d out of fake critical section\n\n", disastrOS_getpid());
   }
 
   disastrOS_semClose(sem1);
@@ -51,12 +48,6 @@ void initFunction(void* args) {
   printf("I feel like to spawn 10 nice threads\n");
   int alive_children=0;
   for (int i=0; i<10; ++i) {
-    int type=0;
-    int mode=DSOS_CREATE;
-    printf("mode: %d\n", mode);
-    printf("opening resource (and creating if necessary)\n");
-    int fd=disastrOS_openResource(i,type,mode);
-    printf("fd=%d\n", fd);
     disastrOS_spawn(childFunction, 0);
     alive_children++;
   }
